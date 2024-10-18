@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diabetes Prediction</title>
+</head>
+<body>
+    <h1>Diabetes Prediction</h1>
+    <form id="predictionForm">
+        <label for="gender">Gender:</label><br>
+        <select id="Gender" name="Gender">
+            <option value="0">Male</option>
+            <option value="1">Female</option>
+        </select><br><br>
+        <label for="age">Age:</label><br>
+        <input type="text" id="Age" name="Age"><br>
+        <label for="bmi">BMI:</label><br>
+        <input type="text" id="BMI" name="BMI"><br>
+        <label for="blood_pressure">Blood Pressure:</label><br>
+        <input type="text" id="BloodPressure" name="BloodPressure"><br>
+        <label for="glucose">Glucose:</label><br>
+        <input type="text" id="Glucose" name="Glucose"><br><br>
+        <input type="button" value="Predict" onclick="makePrediction()">
+    </form>
+    <p id="result"></p>
+    <script>
+        function makePrediction() {
+            const formData = {
+                Gender: parseInt(document.getElementById('Gender').value),
+                Age: parseFloat(document.getElementById('Age').value),
+                BMI: parseFloat(document.getElementById('BMI').value),
+                BloodPressure: parseFloat(document.getElementById('BloodPressure').value),
+                Glucose: parseFloat(document.getElementById('Glucose').value)
+            };
+            fetch('http://127.0.0.1:5000/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = `
+                Prediction: ${data.prediction}<br>
+                Recommendation: ${JSON.stringify(data.recommendation)}
+                `;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = `Error: ${error.message}`;
+            });
+        }
+    </script>
+</body>
+</html>
